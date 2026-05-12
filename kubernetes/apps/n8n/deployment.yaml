@@ -25,7 +25,9 @@ spec:
             - name: WEBHOOK_URL
               value: "http://192.168.0.100/n8n"
             - name: N8N_BASE_URL
-              value: "http://192.168.0.100/n8n"
+              value: "/n8n"
+            - name: N8N_EDITOR_BASE_URL
+              value: "/n8n"
             - name: N8N_PROTOCOL
               value: "http"
             - name: GENERIC_TIMEZONE
