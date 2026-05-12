@@ -30,6 +30,10 @@ spec:
               value: "http"
             - name: GENERIC_TIMEZONE
               value: "America/Sao_Paulo"
+            - name: N8N_PORT
+              value: "5678"
+            - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+              value: "false"
           resources:
             requests:
               memory: "256Mi"
@@ -39,13 +43,13 @@ spec:
               cpu: "1000m"
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: 5678
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: 5678
             initialDelaySeconds: 10
             periodSeconds: 5
