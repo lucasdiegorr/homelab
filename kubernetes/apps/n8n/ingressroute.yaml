@@ -1,17 +1,19 @@
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: n8n
   namespace: n8n
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.replace-path: /n8n$2
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: PathPrefix(`/n8n`)
-      kind: Rule
-      services:
-        - name: n8n
-          port: 5678
-      middlewares:
-        - name: add-n8n-prefix
-          namespace: n8n
+  rules:
+  - http:
+      paths:
+      - path: /n8n(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: n8n
+            port:
+              number: 5678
