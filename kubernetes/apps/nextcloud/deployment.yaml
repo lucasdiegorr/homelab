@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+        - name: nextcloud
+          image: nextcloud:apache
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nextcloud-data
+              mountPath: /var/www/html
+          env:
+            - name: NEXTCLOUD_DATA_DIR
+              value: /var/www/html/data
+            - name: NEXTCLOUD_HOST
+              value: "localhost"
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "192.168.0.100"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: nextcloud-data
+          persistentVolumeClaim:
+            claimName: nextcloud-data
