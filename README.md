@@ -2,6 +2,8 @@
 
 Infrastructure-as-code for k3s homelab managed via GitOps.
 
+> **Note:** This README should be kept up to date with current services and configurations. Update it whenever services are added, removed, or modified.
+
 ## Structure
 
 ```
@@ -16,6 +18,7 @@ ansible/        # Host configuration
 |----------|----------------------------------|--------------------------|
 | ArgoCD   | http://192.168.0.100/argocd/    | GitOps controller       |
 | Nextcloud| http://192.168.0.100/nextcloud/ | Cloud storage           |
+| N8N      | http://192.168.0.100/n8n/       | Workflow automation     |
 
 ### ArgoCD Access
 
@@ -30,6 +33,11 @@ ansible/        # Host configuration
 
 - **URL**: http://192.168.0.100/nextcloud/
 - **Database**: MariaDB (credentials stored in `secret/mariadb`)
+
+### N8N Access
+
+- **URL**: http://192.168.0.100/n8n/
+- **First access**: Create your admin user on first login
 
 ## Deploying Changes
 
