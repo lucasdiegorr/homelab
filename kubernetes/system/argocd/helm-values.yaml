@@ -1,0 +1,29 @@
+server:
+  ingress:
+    enabled: false
+  service:
+    type: ClusterIP
+    port: 80
+  insecure: true
+  baseHref: "/argocd"
+  rootPath: "/argocd"
+  config:
+    url: "http://192.168.0.100/argocd"
+
+controller:
+  replicas: 1
+
+repo:
+  replicas: 1
+
+redis:
+  replicas: 1
+
+notification:
+  enabled: false
+
+applicationSet:
+  enabled: false
+
+extensions:
+  enabled: false

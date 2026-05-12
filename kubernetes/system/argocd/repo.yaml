@@ -1,0 +1,9 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Repository
+metadata:
+  name: homelab
+  namespace: argocd
+spec:
+  type: git
+  url: https://github.com/lucasdiegorr/homelab.git
+  insecure: true

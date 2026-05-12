@@ -1,0 +1,18 @@
+# Secrets - NUNCA commitar
+*.real.yaml
+*-secret.yaml
+secrets/
+*.sops.yaml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# K8s
+*.kubeconfig
+
+# IDE
+.idea/
+.vscode/
+*.swp
