@@ -1,95 +1,74 @@
 # Homelab
 
-Infrastructure-as-code for k3s homelab managed via GitOps.
+A personal infrastructure-as-code project for managing a self-hosted cloud environment using Kubernetes (k3s) and GitOps.
 
-> **Note:** This README should be kept up to date with current services and configurations. Update it whenever services are added, removed, or modified.
+## Overview
 
-## Structure
+This repository contains the configuration and manifests to deploy and manage various self-hosted services in a home lab environment. The entire infrastructure is managed through GitOps, ensuring version-controlled, reproducible deployments.
+
+## Features
+
+- **GitOps-based Deployment**: All changes are declarative and synchronized automatically via ArgoCD
+- **Self-hosted Services**: Cloud storage, workflow automation, and more
+- **Container Orchestration**: Powered by k3s lightweight Kubernetes
+- **Traefik Integration**: Reverse proxy with automatic routing for services
+- **Persistent Storage**: Volume management for data persistence
+- **Database Support**: MariaDB for relational data storage
+
+## Architecture
 
 ```
-kubernetes/     # K8s manifests (GitOps via ArgoCD)
+┌─────────────────────────────────────┐
+│           k3s Cluster              │
+├─────────────────────────────────────┤
+│  ArgoCD   │  Traefik  │  Services  │
+│  (GitOps) │ (Ingress) │ (User Apps)│
+└─────────────────────────────────────┘
+```
+
+### Directory Structure
+
+```
+kubernetes/     # Kubernetes manifests (GitOps)
+├── system/     # System components (ArgoCD, etc.)
+└── apps/       # User applications
 terraform/      # Infrastructure definitions
 ansible/        # Host configuration
 ```
 
 ## Services
 
-| Service  | URL                              | Description              |
-|----------|----------------------------------|--------------------------|
-| ArgoCD   | http://192.168.0.100/argocd/    | GitOps controller       |
-| Nextcloud| http://192.168.0.100/nextcloud/ | Cloud storage           |
-| N8N      | http://192.168.0.100/n8n/       | Workflow automation     |
+| Service   | Description              |
+|-----------|--------------------------|
+| ArgoCD    | GitOps continuous delivery |
+| Nextcloud | Self-hosted cloud storage  |
+| N8N       | Workflow automation        |
 
-### ArgoCD Access
+## Getting Started
 
-- **URL**: http://192.168.0.100/argocd/
-- **Username**: admin
-- **Password**:
-  ```bash
-  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-  ```
+### Prerequisites
 
-### Nextcloud Access
+- k3s cluster running
+- kubectl configured
+- Git repository with this codebase
 
-- **URL**: http://192.168.0.100/nextcloud/
-- **Database**: MariaDB (credentials stored in `secret/mariadb`)
+### Accessing Services
 
-### N8N Access
+Services are accessible through Traefik at the configured endpoints. Access credentials are stored in Kubernetes secrets and should not be committed to git.
 
-- **URL**: http://192.168.0.100/n8n/
-- **First access**: Create your admin user on first login
+### Making Changes
 
-## Deploying Changes
+1. Create a feature branch from `master`
+2. Modify the desired Kubernetes manifests
+3. Open a Pull Request for review
+4. After merging, ArgoCD automatically syncs the changes
 
-Changes to the `kubernetes/` directory are automatically synchronized by ArgoCD.
+## Security
 
-1. Make changes to YAML files in `kubernetes/`
-2. Commit and push to GitHub
-3. ArgoCD will automatically sync within seconds
+- **Never commit secrets** to this repository
+- Use Kubernetes secrets or SealedSecrets for sensitive data
+- Review all changes before merging
 
-## Manual Commands
+## License
 
-### Kubernetes
-
-```bash
-# Apply changes manually (if needed)
-kubectl apply -f kubernetes/
-
-# Validate before applying
-kubectl apply -f kubernetes/ --dry-run=client
-
-# Check pods
-kubectl get pods -n <namespace>
-```
-
-### ArgoCD CLI
-
-```bash
-# Install ArgoCD CLI
-brew install argocd
-
-# Login
-argocd login http://192.168.0.100:8080/argocd
-
-# Check sync status
-argocd app list
-```
-
-## Secrets
-
-- MariaDB credentials: stored in `secret/mariadb` namespace `nextcloud`
-- Never commit secrets to git
-- Use SealedSecrets or external-secrets for production
-
-## Development
-
-```bash
-# Clone the repo
-git clone https://github.com/lucasdiegorr/homelab.git
-
-# Test Kubernetes manifests
-kubectl kustomize kubernetes/apps/nextcloud/
-
-# View ArgoCD applications
-kubectl get applications -n argocd
-```
+MIT

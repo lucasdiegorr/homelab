@@ -72,6 +72,7 @@ ansible-playbook -i inventory.ini playbook.yml
 - When updating secrets, delete the resource first before recreating to avoid ArgoCD overwriting
 - Use Traefik IngressRoute for subpath routing (e.g., `/nextcloud`)
 - **Always create a PR instead of pushing directly to master**
+- **Keep the README.md updated** with current services and important information - this is the main entry point for the project
 
 ## Workflow (via PR)
 
