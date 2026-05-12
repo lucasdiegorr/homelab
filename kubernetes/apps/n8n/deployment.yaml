@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: n8n
-          image: n8nio/n8n:1.68.0
+          image: n8nio/n8n:1.76.0
           ports:
             - containerPort: 5678
           volumeMounts:
@@ -24,9 +24,7 @@ spec:
           env:
             - name: WEBHOOK_URL
               value: "http://192.168.0.100/n8n"
-            - name: N8N_BASE_URL
-              value: "/n8n"
-            - name: N8N_EDITOR_BASE_URL
+            - name: N8N_PATH
               value: "/n8n"
             - name: N8N_PROTOCOL
               value: "http"
@@ -36,6 +34,8 @@ spec:
               value: "5678"
             - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
               value: "false"
+            - name: N8N_EDITOR_BASE_URL
+              value: "/n8n"
           resources:
             requests:
               memory: "256Mi"
@@ -47,14 +47,16 @@ spec:
             httpGet:
               path: /
               port: 5678
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 5678
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: n8n-data
           persistentVolumeClaim:

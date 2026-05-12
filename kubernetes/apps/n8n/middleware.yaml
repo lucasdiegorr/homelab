@@ -1,10 +1,9 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: strip-n8n
+  name: add-n8n-prefix
   namespace: n8n
 spec:
-  stripPrefix:
-    prefixes:
-      - /n8n
-    forceSlash: false
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Prefix: "/n8n"
