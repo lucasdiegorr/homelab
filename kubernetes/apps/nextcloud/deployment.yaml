@@ -28,6 +28,12 @@ spec:
               value: "localhost"
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: "192.168.0.100"
+            - name: PHP_VALUE
+              value: "auto_preload_file=null"
+            - name: OVERWRITEWEBROOT
+              value: "/nextcloud"
+            - name: OVERWRITEHOST
+              value: "192.168.0.100"
           resources:
             requests:
               memory: "512Mi"

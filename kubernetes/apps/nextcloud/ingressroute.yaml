@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix(`/nextcloud`)
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 80
+      middlewares:
+        - name: strip-nextcloud
+          namespace: nextcloud
