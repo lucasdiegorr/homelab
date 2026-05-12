@@ -5,13 +5,14 @@ metadata:
   namespace: n8n
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.replace-path: /n8n$2
+    traefik.ingress.kubernetes.io/router.stripprefix: "true"
+    traefik.ingress.kubernetes.io/router.stripprefix.forceSlash: "false"
 spec:
   rules:
   - http:
       paths:
-      - path: /n8n(/|$)(.*)
-        pathType: ImplementationSpecific
+      - path: /n8n
+        pathType: Prefix
         backend:
           service:
             name: n8n
