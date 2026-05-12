@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - nextcloud/
 - n8n/
+- jellyfin/
