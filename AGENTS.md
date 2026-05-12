@@ -2,6 +2,17 @@
 
 Repository for k3s homelab managed via GitOps (ArgoCD).
 
+## Important: Branch Protection
+
+**The `master` branch is protected against direct commits.**
+All changes must be submitted via Pull Request (PR).
+
+Before making changes:
+1. Create a feature branch from `master`
+2. Make your changes and commit to the feature branch
+3. Open a PR for review
+4. After PR is merged, ArgoCD will automatically sync the changes
+
 ## Structure
 
 - `kubernetes/` - K8s manifests organized by app/namespace
@@ -60,6 +71,26 @@ ansible-playbook -i inventory.ini playbook.yml
 - Keep secrets out of git (use SealedSecrets or manage manually)
 - When updating secrets, delete the resource first before recreating to avoid ArgoCD overwriting
 - Use Traefik IngressRoute for subpath routing (e.g., `/nextcloud`)
+- **Always create a PR instead of pushing directly to master**
+
+## Workflow (via PR)
+
+```bash
+# 1. Create feature branch
+git checkout -b feature/my-new-app
+
+# 2. Make changes and commit
+git add .
+git commit -m "Add new application"
+
+# 3. Push branch
+git push -u origin feature/my-new-app
+
+# 4. Create PR via GitHub CLI or web UI
+gh pr create --title "Add new application" --body "Description"
+```
+
+After the PR is merged, ArgoCD will automatically sync the changes to the cluster.
 
 ## Application Pattern
 
