@@ -4,6 +4,8 @@ namespace: nextcloud
 resources:
 - namespace.yaml
 - pvc.yaml
+- mariadb-pvc.yaml
+- mariadb-deployment.yaml
 - deployment.yaml
 - service.yaml
 - middleware.yaml

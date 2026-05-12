@@ -34,6 +34,25 @@ spec:
               value: "/nextcloud"
             - name: OVERWRITEHOST
               value: "192.168.0.100"
+            - name: DATABASE_TYPE
+              value: mysql
+            - name: DATABASE_HOST
+              value: mariadb
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb
+                  key: database
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb
+                  key: password
           resources:
             requests:
               memory: "512Mi"
