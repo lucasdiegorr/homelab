@@ -7,5 +7,6 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingressroute.yaml
+- middleware.yaml
 - middleware-strip.yaml
 - ingressroute-tunnel.yaml
