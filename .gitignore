@@ -1,6 +1,7 @@
 # Secrets - NUNCA commitar
 *.real.yaml
 *-secret.yaml
+!*-sealed-secret.yaml
 secrets/
 *.sops.yaml
 
