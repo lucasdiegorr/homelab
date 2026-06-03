@@ -4,3 +4,4 @@ resources:
 - nextcloud/
 - n8n/
 - jellyfin/
+- cloudflared/
