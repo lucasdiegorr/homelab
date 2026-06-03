@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`nextcloud.lucasrocha.dpdns.org`)
+    - match: Host(`nextcloud.lucasrocha.dpdns.org`) && PathPrefix(`/nextcloud`)
       kind: Rule
       services:
         - name: nextcloud
@@ -15,5 +15,8 @@ spec:
       middlewares:
         - name: strip-nextcloud
           namespace: nextcloud
-        - name: add-nextcloud-prefix
-          namespace: nextcloud
+    - match: Host(`nextcloud.lucasrocha.dpdns.org`)
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 80
