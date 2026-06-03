@@ -9,4 +9,5 @@ resources:
 - ingressroute.yaml
 - middleware.yaml
 - middleware-strip.yaml
+- middleware-redirect-root.yaml
 - ingressroute-tunnel.yaml
