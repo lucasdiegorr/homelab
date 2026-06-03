@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextcloud-tunnel
+  namespace: nextcloud
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`nextcloud.lucasrocha.dpdns.org`)
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 80
+      middlewares:
+        - name: strip-nextcloud
+          namespace: nextcloud
+        - name: add-nextcloud-prefix
+          namespace: nextcloud

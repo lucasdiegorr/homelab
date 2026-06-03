@@ -27,13 +27,11 @@ spec:
             - name: NEXTCLOUD_HOST
               value: "localhost"
             - name: NEXTCLOUD_TRUSTED_DOMAINS
-              value: "192.168.0.100"
+              value: "192.168.0.100 nextcloud.lucasrocha.dpdns.org"
             - name: PHP_VALUE
               value: "auto_preload_file=null"
             - name: OVERWRITEWEBROOT
               value: "/nextcloud"
-            - name: OVERWRITEHOST
-              value: "192.168.0.100"
             - name: DATABASE_TYPE
               value: mysql
             - name: DATABASE_HOST

@@ -9,4 +9,6 @@ resources:
 - deployment.yaml
 - service.yaml
 - middleware.yaml
+- middleware-add-prefix.yaml
 - ingressroute.yaml
+- ingressroute-tunnel.yaml
