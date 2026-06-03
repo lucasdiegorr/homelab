@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`nextcloud.lucasrocha.dpdns.org`)
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/nextcloud`)
       kind: Rule
       services:
         - name: nextcloud
