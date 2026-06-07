@@ -8,7 +8,4 @@ resources:
 - mariadb-deployment.yaml
 - deployment.yaml
 - service.yaml
-- middleware.yaml
-- middleware-add-prefix.yaml
-- ingressroute.yaml
-- ingressroute-tunnel.yaml
+- ingressroute-port.yaml

@@ -1,0 +1,20 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      web-nextcloud:
+        port: 8080
+        expose: true
+        exposedPort: 8080
+      web-n8n:
+        port: 8081
+        expose: true
+        exposedPort: 8081
+      web-jellyfin:
+        port: 8082
+        expose: true
+        exposedPort: 8082
