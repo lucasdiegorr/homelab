@@ -5,13 +5,10 @@ metadata:
   namespace: nextcloud
 spec:
   entryPoints:
-    - web
+    - web-nextcloud
   routes:
-    - match: PathPrefix(`/nextcloud`)
+    - match: PathPrefix(`/`)
       kind: Rule
       services:
         - name: nextcloud
           port: 80
-      middlewares:
-        - name: strip-nextcloud
-          namespace: nextcloud
