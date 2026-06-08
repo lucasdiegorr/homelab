@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web-jellyfin
   routes:
-    - match: PathPrefix(`/`)
+    - match: Host(`jellyfin.lucasrocha.dpdns.org`) && PathPrefix(`/`)
       kind: Rule
       services:
         - name: jellyfin

@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web-n8n
   routes:
-    - match: PathPrefix(`/`)
+    - match: Host(`n8n.lucasrocha.dpdns.org`) && PathPrefix(`/`)
       kind: Rule
       services:
         - name: n8n
