@@ -8,13 +8,19 @@ spec:
     ports:
       web-nextcloud:
         port: 8080
-        expose: true
+        expose:
+          default: true
         exposedPort: 8080
+        protocol: TCP
       web-n8n:
         port: 8081
-        expose: true
+        expose:
+          default: true
         exposedPort: 8081
+        protocol: TCP
       web-jellyfin:
         port: 8082
-        expose: true
+        expose:
+          default: true
         exposedPort: 8082
+        protocol: TCP
