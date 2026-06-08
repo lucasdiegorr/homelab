@@ -5,13 +5,10 @@ metadata:
   namespace: n8n
 spec:
   entryPoints:
-    - web
+    - web-n8n
   routes:
-    - match: PathPrefix(`/n8n`)
+    - match: PathPrefix(`/`)
       kind: Rule
       services:
         - name: n8n
           port: 5678
-      middlewares:
-        - name: strip-n8n
-          namespace: n8n
