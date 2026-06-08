@@ -22,22 +22,16 @@ spec:
             - name: n8n-data
               mountPath: /home/node/.n8n
           env:
-            - name: WEBHOOK_URL
-              value: "http://192.168.0.100/n8n/"
-            - name: N8N_PATH
-              value: "/n8n/"
-            - name: N8N_PROTOCOL
-              value: "http"
-            - name: GENERIC_TIMEZONE
-              value: "America/Sao_Paulo"
             - name: N8N_PORT
               value: "5678"
-            - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-              value: "false"
-            - name: N8N_EDITOR_BASE_URL
-              value: "/n8n/"
+            - name: N8N_PROTOCOL
+              value: "http"
             - name: N8N_SECURE_COOKIE
               value: "false"
+            - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+              value: "false"
+            - name: GENERIC_TIMEZONE
+              value: "America/Sao_Paulo"
           resources:
             requests:
               memory: "256Mi"

@@ -6,8 +6,4 @@ resources:
 - pvc.yaml
 - deployment.yaml
 - service.yaml
-- ingressroute.yaml
-- middleware.yaml
-- middleware-strip.yaml
-- middleware-redirect-root.yaml
-- ingressroute-tunnel.yaml
+- ingressroute-port.yaml
