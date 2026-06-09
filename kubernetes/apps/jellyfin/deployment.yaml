@@ -23,6 +23,9 @@ spec:
               mountPath: /config
             - name: jellyfin-cache
               mountPath: /cache
+          args:
+            - --base-url
+            - /jellyfin
           env:
             - name: JELLYFIN_PublishedServerUrl
               value: "https://lucasrocha.dpdns.org/jellyfin"
