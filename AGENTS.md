@@ -8,17 +8,24 @@ Repository for k3s homelab managed via GitOps (ArgoCD).
 All changes must be submitted via Pull Request (PR).
 
 Before making changes:
-1. Create a feature branch from `master`
-2. Make your changes and commit to the feature branch
-3. Open a PR for review
-4. After PR is merged, ArgoCD will automatically sync the changes
+1. **Always pull latest master** before creating a feature branch:
+   ```bash
+   git checkout master && git pull origin master
+   ```
+2. Create a feature branch from `master`:
+   ```bash
+   git checkout -b feature/my-change
+   ```
+3. Make your changes and commit to the feature branch
+4. Open a PR for review
+5. After PR is merged, ArgoCD will automatically sync the changes
 
 ## Structure
 
 - `kubernetes/` - K8s manifests organized by app/namespace
   - `system/` - System components (ArgoCD, etc.)
-  - `apps/` - User applications (Nextcloud, etc.)
-- `terraform/` - Infrastructure (VM, networking, storage)
+  - `apps/` - User applications (Nextcloud, N8N, Jellyfin, Traefik)
+- `terraform/` - Infrastructure (Cloudflare tunnel config, DNS records)
 - `ansible/` - Host-level configuration
 
 ## Key Commands
@@ -29,12 +36,14 @@ Before making changes:
 # Validate YAML before applying
 kubectl apply -f kubernetes/ --dry-run=client
 
-# Apply changes
-kubectl apply -f kubernetes/
-
 # Check resources
 kubectl get all -n <namespace>
-kubectl describe ingress -n <namespace>
+kubectl describe ingressroute -n <namespace>
+kubectl get middleware -A
+
+# Check Traefik routers (port-forward required)
+kubectl port-forward -n kube-system svc/traefik 9000:9000 &
+curl -s http://localhost:9000/api/http/routers
 ```
 
 ### ArgoCD
@@ -46,17 +55,35 @@ kubectl get applications -n argocd
 # View application details
 kubectl describe application <app-name> -n argocd
 
-# Force sync (via UI or CLI)
+# Force sync (via CLI)
 argocd app sync <app-name>
 ```
 
 ### Terraform
 
 ```bash
+# Initialize (first time or after provider changes)
 terraform init
+
+# Preview and apply
 terraform plan -out=tfplan
 terraform apply tfplan
+
+# Quick apply (after initial plan)
+terraform apply -auto-approve
 ```
+
+### Cloudflare API Token
+
+```bash
+# Verify token validity
+curl -s -X GET \
+  "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/tokens/verify" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+```
+
+Token is stored in `terraform/terraform.tfvars` (gitignored) and `~/.bashrc` for interactive shells.
+Note: `~/.bashrc` returns early in non-interactive shells, so Terraform uses `terraform.tfvars`.
 
 ### Ansible
 
@@ -64,38 +91,40 @@ terraform apply tfplan
 ansible-playbook -i inventory.ini playbook.yml
 ```
 
-## Tips
+## Architecture: Path-Based Access
 
-- Use `kubectl --dry-run=client` to validate YAML before applying
-- For ArgoCD: manifests must be in a git repo ArgoCD watches
-- Keep secrets out of git (use SealedSecrets or manage manually)
-- When updating secrets, delete the resource first before recreating to avoid ArgoCD overwriting
-- Use Traefik IngressRoute for subpath routing (e.g., `/nextcloud`)
-- **Always create a PR instead of pushing directly to master**
-- **Keep the README.md updated** with current services and important information - this is the main entry point for the project
+All apps are accessed at `lucasrocha.dpdns.org/<app>` via Cloudflare Tunnel (WAN) or `192.168.0.100/<app>` (LAN).
 
-## Workflow (via PR)
+### WAN (via Cloudflare Tunnel)
 
-```bash
-# 1. Create feature branch
-git checkout -b feature/my-new-app
-
-# 2. Make changes and commit
-git add .
-git commit -m "Add new application"
-
-# 3. Push branch
-git push -u origin feature/my-new-app
-
-# 4. Create PR via GitHub CLI or web UI
-gh pr create --title "Add new application" --body "Description"
+```
+Browser → Cloudflare Tunnel → Traefik web:80 → IngressRoute (Host: lucasrocha.dpdns.org + PathPrefix)
 ```
 
-After the PR is merged, ArgoCD will automatically sync the changes to the cluster.
+- Tunnel has a single ingress rule: `lucasrocha.dpdns.org → http://192.168.0.100:80`
+- IngressRoute matches `Host(lucasrocha.dpdns.org) && PathPrefix(/<app>)`
+- Middlewares: `strip-<app>` (removes path prefix) + `https-proto` (sets X-Forwarded-Proto: https)
+- Terraform manages tunnel config + DNS CNAME (via `cloudflare_zero_trust_tunnel_cloudflared_config`)
+
+### LAN (direct)
+
+```
+Browser → Traefik web:80 → IngressRoute (Host: 192.168.0.100 + PathPrefix)
+```
+
+- IngressRoute matches `Host(192.168.0.100) && PathPrefix(/<app>)`
+- Middleware: `strip-<app>` only (no https-proto, no proto override)
+
+### Traefik
+
+- Single entrypoint: `web` (port 80)
+- Differentiates WAN from LAN by `Host` header
+- Runs as LoadBalancer at `192.168.0.100` in `kube-system` namespace
+- Extra entrypoints (`web-nextcloud`, `web-n8n`, `web-jellyfin`) were removed in PR #20
 
 ## Application Pattern
 
-Each application should have its own directory under `kubernetes/apps/<app-name>/`:
+Each application has its own directory under `kubernetes/apps/<app-name>/`:
 
 ```
 kubernetes/apps/nextcloud/
@@ -103,9 +132,122 @@ kubernetes/apps/nextcloud/
 ├── kustomization.yaml
 ├── deployment.yaml
 ├── service.yaml
-├── ingressroute.yaml
+├── ingressroute-port.yaml      # WAN IngressRoute (Host: lucasrocha.dpdns.org)
+├── ingressroute-lan.yaml       # LAN IngressRoute (Host: 192.168.0.100)
+├── middleware-nextcloud.yaml    # strip-<app> + https-proto middlewares
 ├── pvc.yaml
-└── middleware.yaml (if needed)
+└── ...
 ```
 
-The root `kubernetes/apps/kustomization.yaml` references all applications, and ArgoCD automatically syncs them.
+### IngressRoute WAN Template
+
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: <app>
+  namespace: <namespace>
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/<app>`)
+      kind: Rule
+      middlewares:
+        - name: strip-<app>
+        - name: https-proto
+      services:
+        - name: <app>
+          port: 80
+```
+
+### IngressRoute LAN Template
+
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: <app>-lan
+  namespace: <namespace>
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`192.168.0.100`) && PathPrefix(`/<app>`)
+      kind: Rule
+      middlewares:
+        - name: strip-<app>
+      services:
+        - name: <app>
+          port: 80
+```
+
+### Middleware Template
+
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-<app>
+  namespace: <namespace>
+spec:
+  stripPrefix:
+    prefixes:
+      - /<app>
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-proto
+  namespace: <namespace>
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+```
+
+## App-Specific Configuration
+
+### Nextcloud
+
+- `overwritewebroot=/nextcloud` set via env var in deployment
+- `OVERWRITEPROTOCOL` removed — replaced by `https-proto` middleware on WAN routes
+- `trusted_proxies` configured for `192.168.0.100` and `10.42.0.0/16`
+
+### N8N
+
+- `WEBHOOK_URL=https://lucasrocha.dpdns.org/n8n/`
+- `N8N_EDITOR_BASE_URL=https://lucasrocha.dpdns.org/n8n/`
+
+### Jellyfin
+
+- `JELLYFIN_PublishedServerUrl=https://lucasrocha.dpdns.org/jellyfin`
+
+## Terraform-Managed Cloudflare Resources
+
+The following are managed via Terraform (not the Cloudflare dashboard):
+
+| Resource | Purpose |
+|---|---|
+| `cloudflare_zero_trust_tunnel_cloudflared_config` | Tunnel ingress rules (single rule → port 80) |
+| `cloudflare_dns_record` | CNAME apex → tunnel |
+
+### Token Permissions
+
+The Terraform API token needs **two resource scopes**:
+
+1. **Account** → All resources: Cloudflare Tunnel:Write, Account Settings:Read, Account DNS Settings:Read
+2. **Zone** (lucasrocha.dpdns.org) → All resources: DNS:Write, Zone:Read, Zone DNS Settings:Write, DNS:Read
+
+## Tips
+
+- Use `kubectl --dry-run=client` to validate YAML before applying
+- For ArgoCD: manifests must be in a git repo ArgoCD watches
+- Keep secrets out of git (use SealedSecrets or manage manually)
+- When updating secrets, delete the resource first before recreating to avoid ArgoCD overwriting
+- **Always create a PR instead of pushing directly to master**
+- **Always pull latest master before creating a feature branch** to avoid stale base
+- **Keep the README.md updated** with current services and important information
+- **`nslookup` bypasses the hosts file** on Windows — use `ping` to test hosts file resolution
+- **`~/.bashrc` has a non-interactive shell guard** (`case $- in *i*) ;; *) return;; esac`) — env vars set after the guard won't be available in non-interactive shells like CI or the bash tool
+- **Browser might auto-redirect to HTTPS** for `lucasrocha.dpdns.org` due to HSTS — use incognito mode or `http://192.168.0.100/<app>` for LAN testing
