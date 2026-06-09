@@ -14,3 +14,33 @@ spec:
       services:
         - name: n8n
           port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/static`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/assets`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/healthz`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/rest`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/webhook`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/webhook-test`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678

@@ -14,5 +14,35 @@ spec:
       services:
         - name: n8n
           port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/static`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/assets`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/healthz`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/rest`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/webhook`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/webhook-test`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
   tls:
     certResolver: letsencrypt
