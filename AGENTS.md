@@ -19,6 +19,11 @@ Before making changes:
 3. Make your changes and commit to the feature branch
 4. Open a PR for review
 5. After PR is merged, ArgoCD will automatically sync the changes
+6. Delete the feature branch locally to keep the repo clean:
+   ```bash
+   git checkout master && git pull origin master
+   git branch -d feature/my-change
+   ```
 
 ## Structure
 
