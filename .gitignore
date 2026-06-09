@@ -9,6 +9,9 @@ secrets/
 *.tfstate
 *.tfstate.*
 .terraform/
+*.tfvars
+*.tfvars.json
+*.zip
 
 # K8s
 *.kubeconfig

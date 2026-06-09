@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: PathPrefix(`/nextcloud`)
+    - match: Host(`192.168.0.100`) && PathPrefix(`/nextcloud`)
       kind: Rule
       middlewares:
         - name: strip-nextcloud

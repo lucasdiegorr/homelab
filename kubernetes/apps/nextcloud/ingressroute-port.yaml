@@ -5,9 +5,9 @@ metadata:
   namespace: nextcloud
 spec:
   entryPoints:
-    - web-nextcloud
+    - web
   routes:
-    - match: PathPrefix(`/`)
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/nextcloud`)
       kind: Rule
       middlewares:
         - name: strip-nextcloud
