@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: PathPrefix(`/jellyfin`)
+    - match: Host(`192.168.0.100`) && PathPrefix(`/jellyfin`)
       kind: Rule
       middlewares:
         - name: strip-jellyfin

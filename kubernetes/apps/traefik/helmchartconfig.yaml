@@ -5,22 +5,3 @@ metadata:
   namespace: kube-system
 spec:
   valuesContent: |-
-    ports:
-      web-nextcloud:
-        port: 9080
-        expose:
-          default: true
-        exposedPort: 8080
-        protocol: TCP
-      web-n8n:
-        port: 9081
-        expose:
-          default: true
-        exposedPort: 8081
-        protocol: TCP
-      web-jellyfin:
-        port: 9082
-        expose:
-          default: true
-        exposedPort: 8082
-        protocol: TCP

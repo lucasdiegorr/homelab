@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: PathPrefix(`/n8n`)
+    - match: Host(`192.168.0.100`) && PathPrefix(`/n8n`)
       kind: Rule
       middlewares:
         - name: strip-n8n
