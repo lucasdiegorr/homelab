@@ -9,6 +9,13 @@ spec:
   routes:
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/jellyfin`)
       kind: Rule
+      middlewares:
+        - name: strip-jellyfin
+      services:
+        - name: jellyfin
+          port: 8096
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/web`)
+      kind: Rule
       services:
         - name: jellyfin
           port: 8096
