@@ -12,5 +12,10 @@ spec:
       services:
         - name: jellyfin
           port: 8096
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/web`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: 8096
   tls:
     certResolver: letsencrypt

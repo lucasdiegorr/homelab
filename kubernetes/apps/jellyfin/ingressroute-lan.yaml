@@ -12,3 +12,8 @@ spec:
       services:
         - name: jellyfin
           port: 8096
+    - match: Host(`192.168.0.100`) && PathPrefix(`/web`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: 8096
