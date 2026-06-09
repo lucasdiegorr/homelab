@@ -9,3 +9,5 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingressroute-port.yaml
+- ingressroute-lan.yaml
+- middleware-nextcloud.yaml

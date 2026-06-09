@@ -25,7 +25,7 @@ spec:
               mountPath: /cache
           env:
             - name: JELLYFIN_PublishedServerUrl
-              value: "https://jellyfin.lucasrocha.dpdns.org"
+              value: "https://lucasrocha.dpdns.org/jellyfin"
           resources:
             requests:
               memory: "256Mi"
