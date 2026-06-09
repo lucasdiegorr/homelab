@@ -10,6 +10,7 @@ spec:
     - match: PathPrefix(`/`)
       kind: Rule
       middlewares:
+        - name: strip-nextcloud
         - name: https-proto
       services:
         - name: nextcloud
