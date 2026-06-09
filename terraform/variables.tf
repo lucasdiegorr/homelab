@@ -29,7 +29,7 @@ variable "cloudflare_api_token" {
 }
 
 variable "origin_port" {
-  description = "Traefik web entrypoint port"
+  description = "Traefik web entrypoint port (unused, hardcoded 443 in main.tf)"
   type        = number
-  default     = 80
+  default     = 443
 }

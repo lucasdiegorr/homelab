@@ -5,13 +5,14 @@ metadata:
   namespace: jellyfin
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/jellyfin`)
       kind: Rule
       middlewares:
         - name: strip-jellyfin
-        - name: https-proto
       services:
         - name: jellyfin
           port: 8096
+  tls:
+    certResolver: letsencrypt

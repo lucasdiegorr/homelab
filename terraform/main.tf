@@ -7,7 +7,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "tunnel_config" {
     ingress = [
       {
         hostname = var.zone_name
-        service  = "http://${var.origin_ip}:${var.origin_port}"
+        service  = "https://${var.origin_ip}:443"
+        originRequest = {
+          originServerName = var.zone_name
+        }
       },
       {
         service = "http_status:404"
@@ -16,7 +19,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "tunnel_config" {
 
     origin_request = {
       connect_timeout = 30
-      no_tls_verify   = false
     }
   }
 }

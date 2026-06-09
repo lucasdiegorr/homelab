@@ -5,13 +5,14 @@ metadata:
   namespace: nextcloud
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/nextcloud`)
       kind: Rule
       middlewares:
         - name: strip-nextcloud
-        - name: https-proto
       services:
         - name: nextcloud
           port: 80
+  tls:
+    certResolver: letsencrypt

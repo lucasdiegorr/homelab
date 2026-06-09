@@ -5,13 +5,14 @@ metadata:
   namespace: n8n
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/n8n`)
       kind: Rule
       middlewares:
         - name: strip-n8n
-        - name: https-proto
       services:
         - name: n8n
           port: 5678
+  tls:
+    certResolver: letsencrypt
