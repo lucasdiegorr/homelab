@@ -11,3 +11,4 @@ resources:
 - ingressroute-port.yaml
 - ingressroute-lan.yaml
 - middleware-nextcloud.yaml
+- mariadb-sealed-secret.yaml

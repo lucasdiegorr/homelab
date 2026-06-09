@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - helmchartconfig.yaml
 - redirect-https.yaml
+- cloudflare-acme-sealed-secret.yaml
