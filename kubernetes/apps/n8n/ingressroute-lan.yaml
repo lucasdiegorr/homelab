@@ -29,6 +29,11 @@ spec:
       services:
         - name: n8n
           port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/types`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
     - match: Host(`192.168.0.100`) && PathPrefix(`/rest`)
       kind: Rule
       services:
