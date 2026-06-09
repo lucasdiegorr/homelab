@@ -5,3 +5,27 @@ metadata:
   namespace: kube-system
 spec:
   valuesContent: |-
+    certificatesResolvers:
+      letsencrypt:
+        acme:
+          email: lucas.diegorr@gmail.com
+          storage: /data/acme.json
+          dnsChallenge:
+            provider: cloudflare
+    env:
+      - name: CF_DNS_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-acme
+            key: api-token
+    persistence:
+      enabled: true
+      storageClass: local-path
+    deployment:
+      initContainers:
+        - name: volume-permissions
+          image: busybox:latest
+          command: ["sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json"]
+          volumeMounts:
+            - mountPath: /data
+              name: data
