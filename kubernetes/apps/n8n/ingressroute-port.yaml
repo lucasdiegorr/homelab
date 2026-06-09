@@ -29,11 +29,6 @@ spec:
       services:
         - name: n8n
           port: 5678
-    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/types`)
-      kind: Rule
-      services:
-        - name: n8n
-          port: 5678
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/rest`)
       kind: Rule
       services:
@@ -45,6 +40,76 @@ spec:
         - name: n8n
           port: 5678
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/webhook-test`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/home`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/workflow`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/workflows`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/credential`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/credentials`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/execution`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/executions`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/settings`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/oauth`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/oauth2-credential`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/signin`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/signup`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/node-view`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/types`)
       kind: Rule
       services:
         - name: n8n

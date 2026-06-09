@@ -29,11 +29,6 @@ spec:
       services:
         - name: n8n
           port: 5678
-    - match: Host(`192.168.0.100`) && PathPrefix(`/types`)
-      kind: Rule
-      services:
-        - name: n8n
-          port: 5678
     - match: Host(`192.168.0.100`) && PathPrefix(`/rest`)
       kind: Rule
       services:
@@ -45,6 +40,76 @@ spec:
         - name: n8n
           port: 5678
     - match: Host(`192.168.0.100`) && PathPrefix(`/webhook-test`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/home`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/workflow`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/workflows`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/credential`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/credentials`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/execution`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/executions`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/settings`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/oauth`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/oauth2-credential`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/signin`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/signup`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/node-view`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+    - match: Host(`192.168.0.100`) && PathPrefix(`/types`)
       kind: Rule
       services:
         - name: n8n
