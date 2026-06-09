@@ -30,8 +30,8 @@ spec:
               value: "192.168.0.100 nextcloud.lucasrocha.dpdns.org lucasrocha.dpdns.org"
             - name: PHP_VALUE
               value: "auto_preload_file=null"
-            - name: OVERWRITEPROTOCOL
-              value: "https"
+            - name: OVERWRITEWEBROOT
+              value: "/nextcloud"
             - name: DATABASE_TYPE
               value: mysql
             - name: DATABASE_HOST

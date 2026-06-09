@@ -7,3 +7,5 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingressroute-port.yaml
+- ingressroute-lan.yaml
+- middleware-n8n.yaml

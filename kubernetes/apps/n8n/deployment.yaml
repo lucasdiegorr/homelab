@@ -32,6 +32,10 @@ spec:
               value: "false"
             - name: GENERIC_TIMEZONE
               value: "America/Sao_Paulo"
+            - name: WEBHOOK_URL
+              value: "https://lucasrocha.dpdns.org/n8n/"
+            - name: N8N_EDITOR_BASE_URL
+              value: "https://lucasrocha.dpdns.org/n8n/"
           resources:
             requests:
               memory: "256Mi"
