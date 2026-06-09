@@ -1,10 +1,10 @@
 # Homelab
 
-A personal infrastructure-as-code project for managing a self-hosted cloud environment using Kubernetes (k3s), GitOps (ArgoCD), and Cloudflare Tunnel.
+A personal infrastructure-as-code project built on **k3s Kubernetes**, GitOps (ArgoCD), and Cloudflare Tunnel.
 
 ## Overview
 
-This repository contains the configuration and manifests to deploy and manage various self-hosted services in a home lab environment. The entire infrastructure is managed through GitOps, ensuring version-controlled, reproducible deployments.
+A **k3s cluster** runs all services with GitOps-driven deployments via ArgoCD. Traefik acts as the ingress gateway, and Cloudflare Tunnel provides secure WAN access — all managed as code.
 
 All services are accessible via path-based routing on a single domain:
 
@@ -15,50 +15,49 @@ All services are accessible via path-based routing on a single domain:
 
 ## Features
 
-- **GitOps-based Deployment**: All changes are declarative and synchronized automatically via ArgoCD
-- **Path-Based Access**: Single domain + path prefixes for all services, no subdomain management
+- **k3s Cluster**: Lightweight Kubernetes powering all services
+- **GitOps** via ArgoCD: Declarative, version-controlled deployments
+- **Container Orchestration**: All services run as containers managed by k3s
+- **Path-Based Access**: Single domain + path prefixes for all services
 - **Cloudflare Tunnel**: Secure WAN access without opening firewall ports
-- **Infrastructure as Code**: Tunnel config and DNS records managed via Terraform
-- **Container Orchestration**: Powered by k3s lightweight Kubernetes
 - **Traefik Reverse Proxy**: Host-based differentiation between WAN and LAN traffic
+- **Infrastructure as Code**: Tunnel config and DNS records managed via Terraform
 - **Persistent Storage**: Volume management for data persistence
 - **Database Support**: MariaDB for relational data storage
 
 ## Architecture
 
 ```
-WAN (Internet)
-     │
-     ▼
-Cloudflare Tunnel  ───→  Traefik (web:80)
-                               │
-                    ┌──────────┴──────────┐
-                    │  Host Header Match  │
-                    └──────┬──────┬───────┘
-                           │      │
-                     lucasrocha    192.168.0.100
-                     .dpdns.org     (LAN direct)
-                           │      │
-                    ┌──────┘      └──────┐
-                    ▼                    ▼
-              + https-proto         no proto override
-              middleware              
-                    │                    │
-                    └──────┬─────────────┘
-                           ▼
-                    ┌──────────┐
-                    │ Traefik  │
-                    │ Ingress  │
-                    │ Routes   │
-                    │ (strip   │
-                    │  prefix) │
-                    └────┬─────┘
-                         ▼
-              ┌──────────────────────┐
-              │  Kubernetes Services│
-              │  (Nextcloud, N8N,   │
-              │   Jellyfin, ...)    │
-              └──────────────────────┘
+┌─────────────────────────────────────────────────┐
+│                   WAN (Internet)                 │
+└──────────────────────┬──────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────┐
+│              Cloudflare Tunnel                   │
+└──────────────────────┬──────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────┐
+│              k3s Cluster (192.168.0.100)         │
+│                                                  │
+│  ┌─────────────────────────────────────────────┐ │
+│  │         Traefik (web:80)                    │ │
+│  │  WAN: lucasrocha.dpdns.org + https-proto    │ │
+│  │  LAN: 192.168.0.100 (no proto override)     │ │
+│  └───────────────┬─────────────────────────────┘ │
+│                  │                                │
+│  ┌───────────────┴─────────────────────────────┐ │
+│  │        IngressRoutes (strip prefix)         │ │
+│  └───────────────┬─────────────────────────────┘ │
+│                  │                                │
+│  ┌───────────────┴─────────────────────────────┐ │
+│  │    Pods: Nextcloud │ N8N │ Jellyfin │ ...   │ │
+│  └─────────────────────────────────────────────┘ │
+│                                                  │
+│  ┌─────────────────────────────────────────────┐ │
+│  │  ArgoCD (GitOps sync from GitHub)           │ │
+│  └─────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────┘
 ```
 
 ### Directory Structure
