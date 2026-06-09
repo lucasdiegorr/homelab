@@ -9,6 +9,8 @@ spec:
   routes:
     - match: PathPrefix(`/`)
       kind: Rule
+      middlewares:
+        - name: strip-n8n
       services:
         - name: n8n
           port: 5678
