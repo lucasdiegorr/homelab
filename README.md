@@ -82,7 +82,7 @@ ansible/        # Host configuration
 | Nextcloud | Self-hosted cloud storage  | `https://lucasrocha.dpdns.org/nextcloud`        |
 | N8N       | Workflow automation        | `https://lucasrocha.dpdns.org/n8n`              |
 | Jellyfin  | Media server               | `https://lucasrocha.dpdns.org/jellyfin`         |
-| Hermes    | AI agent gateway           | `https://lucasrocha.dpdns.org/hermes/webhook/*` (webhooks only) |
+| Hermes    | AI agent gateway           | WAN: `https://lucasrocha.dpdns.org/hermes/dashboard` (dashboard), `https://lucasrocha.dpdns.org/hermes/webhook/*` (webhooks) |
 
 ## Getting Started
 
