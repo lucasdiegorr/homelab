@@ -44,8 +44,10 @@ spec:
                 secretKeyRef:
                   name: hermes-secrets
                   key: dashboard-secret
+            - name: HERMES_DASHBOARD_INSECURE
+              value: "1"
             - name: API_SERVER_ENABLED
-              value: "true"
+              value: "false"
             - name: API_SERVER_HOST
               value: "0.0.0.0"
             - name: CUSTOM_BASE_URL
@@ -70,16 +72,16 @@ spec:
             httpGet:
               path: /health
               port: 8642
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /health
               port: 8642
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 10
       volumes:
         - name: hermes-data
           persistentVolumeClaim:

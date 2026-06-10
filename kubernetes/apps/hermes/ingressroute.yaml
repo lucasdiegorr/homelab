@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes/dashboard`)
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes-dashboard`)
       kind: Rule
       middlewares:
         - name: strip-hermes-dashboard
