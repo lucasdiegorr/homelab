@@ -23,8 +23,6 @@ spec:
           port: 8642
     - match: Host(`192.168.0.100`) && PathPrefix(`/hermes-dashboard`)
       kind: Rule
-      middlewares:
-        - name: strip-hermes-dashboard
       services:
         - name: hermes
           port: 9119
