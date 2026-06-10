@@ -20,10 +20,10 @@ spec:
       containers:
         - name: hermes
           image: nousresearch/hermes-agent:latest
-          command:
-            - hermes
-            - gateway
-            - run
+          args:
+            - sleep
+            - infinity
+
           ports:
             - containerPort: 8642
               name: api
