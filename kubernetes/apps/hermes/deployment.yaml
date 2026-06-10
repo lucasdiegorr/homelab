@@ -69,19 +69,17 @@ spec:
             - name: shm
               mountPath: /dev/shm
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8642
-            initialDelaySeconds: 60
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 30
             periodSeconds: 30
-            failureThreshold: 10
+            failureThreshold: 5
           readinessProbe:
-            httpGet:
-              path: /health
-              port: 8642
-            initialDelaySeconds: 60
-            periodSeconds: 30
-            failureThreshold: 10
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: hermes-data
           persistentVolumeClaim:
