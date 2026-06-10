@@ -7,6 +7,20 @@ spec:
   entryPoints:
     - web
   routes:
+    - match: Host(`192.168.0.100`) && PathPrefix(`/hermes/webhook/telegram`)
+      kind: Rule
+      middlewares:
+        - name: strip-hermes
+      services:
+        - name: hermes
+          port: 8642
+    - match: Host(`192.168.0.100`) && PathPrefix(`/hermes/webhook/whatsapp`)
+      kind: Rule
+      middlewares:
+        - name: strip-hermes
+      services:
+        - name: hermes
+          port: 8642
     - match: Host(`192.168.0.100`) && PathPrefix(`/hermes-dashboard`)
       kind: Rule
       middlewares:
