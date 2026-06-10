@@ -1,0 +1,34 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hermes
+  namespace: hermes
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes/dashboard`)
+      kind: Rule
+      middlewares:
+        - name: strip-hermes-dashboard
+      services:
+        - name: hermes
+          port: 9119
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes/webhook/telegram`)
+      kind: Rule
+      middlewares:
+        - name: strip-hermes-webhook-telegram
+        - name: https-proto
+      services:
+        - name: hermes
+          port: 8642
+    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes/webhook/whatsapp`)
+      kind: Rule
+      middlewares:
+        - name: strip-hermes-webhook-whatsapp
+        - name: https-proto
+      services:
+        - name: hermes
+          port: 8642
+  tls:
+    certResolver: letsencrypt
