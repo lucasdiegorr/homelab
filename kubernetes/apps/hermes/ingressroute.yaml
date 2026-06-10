@@ -7,13 +7,6 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes-dashboard`)
-      kind: Rule
-      middlewares:
-        - name: strip-hermes-dashboard
-      services:
-        - name: hermes
-          port: 9119
     - match: Host(`lucasrocha.dpdns.org`) && PathPrefix(`/hermes/webhook/telegram`)
       kind: Rule
       middlewares:
