@@ -253,6 +253,8 @@ The Terraform API token needs **two resource scopes**:
 - **Always create a PR instead of pushing directly to master**
 - **Always pull latest master before creating a feature branch** to avoid stale base
 - **Keep the README.md updated** with current services and important information
+- **When adding a new app under `kubernetes/apps/`, add it to `kubernetes/apps/kustomization.yaml`** — otherwise ArgoCD won't deploy it
+- **When adding a new app, also update `README.md`** (directory structure + services table)
 - **`nslookup` bypasses the hosts file** on Windows — use `ping` to test hosts file resolution
 - **`~/.bashrc` has a non-interactive shell guard** (`case $- in *i*) ;; *) return;; esac`) — env vars set after the guard won't be available in non-interactive shells like CI or the bash tool
 - **Browser might auto-redirect to HTTPS** for `lucasrocha.dpdns.org` due to HSTS — use incognito mode or `http://192.168.0.100/<app>` for LAN testing

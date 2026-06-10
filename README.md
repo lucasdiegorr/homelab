@@ -68,7 +68,8 @@ kubernetes/     # Kubernetes manifests (GitOps)
 ├── apps/       # User applications
 │   ├── nextcloud/
 │   ├── n8n/
-│   └── jellyfin/
+│   ├── jellyfin/
+│   └── hermes/
 terraform/      # Infrastructure (Cloudflare tunnel + DNS)
 ansible/        # Host configuration
 ```
@@ -81,6 +82,7 @@ ansible/        # Host configuration
 | Nextcloud | Self-hosted cloud storage  | `https://lucasrocha.dpdns.org/nextcloud`        |
 | N8N       | Workflow automation        | `https://lucasrocha.dpdns.org/n8n`              |
 | Jellyfin  | Media server               | `https://lucasrocha.dpdns.org/jellyfin`         |
+| Hermes    | AI agent gateway           | `https://lucasrocha.dpdns.org/hermes/webhook/*` (webhooks only) |
 
 ## Getting Started
 
