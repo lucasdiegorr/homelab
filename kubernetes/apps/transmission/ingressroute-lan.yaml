@@ -1,0 +1,37 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: transmission-lan
+  namespace: transmission
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`192.168.0.100`) && PathPrefix(`/transmission`)
+      kind: Rule
+      middlewares:
+        - name: strip-transmission
+      services:
+        - name: transmission
+          port: 9091
+    - match: Host(`192.168.0.100`) && PathPrefix(`/transmission/rpc`)
+      kind: Rule
+      middlewares:
+        - name: strip-transmission
+      services:
+        - name: transmission
+          port: 9091
+    - match: Host(`192.168.0.100`) && PathPrefix(`/transmission/web`)
+      kind: Rule
+      middlewares:
+        - name: strip-transmission
+      services:
+        - name: transmission
+          port: 9091
+    - match: Host(`192.168.0.100`) && PathPrefix(`/transmission/upload`)
+      kind: Rule
+      middlewares:
+        - name: strip-transmission
+      services:
+        - name: transmission
+          port: 9091
