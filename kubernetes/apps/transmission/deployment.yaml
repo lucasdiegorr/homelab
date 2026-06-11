@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmission
+  namespace: transmission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+        - name: transmission
+          image: lscr.io/linuxserver/transmission:latest
+          ports:
+            - containerPort: 9091
+              name: webui
+            - containerPort: 51413
+              name: peer-tcp
+              protocol: TCP
+              hostPort: 51413
+            - containerPort: 51413
+              name: peer-udp
+              protocol: UDP
+              hostPort: 51413
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /media
+          env:
+            - name: TZ
+              value: "Etc/UTC"
+            - name: USER
+              valueFrom:
+                secretKeyRef:
+                  name: transmission-auth
+                  key: user
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: transmission-auth
+                  key: pass
+            - name: TRANSMISSION_DOWNLOAD_DIR
+              value: "/media/torrents/complete"
+            - name: TRANSMISSION_INCOMPLETE_DIR
+              value: "/media/torrents/incomplete"
+            - name: TRANSMISSION_WATCH_DIR
+              value: "/media/torrents/watch"
+            - name: PEER_PORT
+              value: "51413"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /transmission/web/
+              port: 9091
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /transmission/web/
+              port: 9091
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: transmission-config
+        - name: media
+          persistentVolumeClaim:
+            claimName: transmission-media

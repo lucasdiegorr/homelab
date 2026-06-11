@@ -7,3 +7,4 @@ resources:
 - jellyfin/
 - cloudflared/
 - hermes/
+- transmission/

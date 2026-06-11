@@ -23,6 +23,8 @@ spec:
               mountPath: /config
             - name: jellyfin-cache
               mountPath: /cache
+            - name: transmission-media
+              mountPath: /media
           env:
             - name: JELLYFIN_PublishedServerUrl
               value: "https://lucasrocha.dpdns.org/jellyfin"
@@ -51,3 +53,6 @@ spec:
             claimName: jellyfin-config
         - name: jellyfin-cache
           emptyDir: {}
+        - name: transmission-media
+          persistentVolumeClaim:
+            claimName: transmission-media

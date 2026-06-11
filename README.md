@@ -69,7 +69,8 @@ kubernetes/     # Kubernetes manifests (GitOps)
 │   ├── nextcloud/
 │   ├── n8n/
 │   ├── jellyfin/
-│   └── hermes/
+│   ├── hermes/
+│   └── transmission/
 terraform/      # Infrastructure (Cloudflare tunnel + DNS)
 ansible/        # Host configuration
 ```
@@ -83,6 +84,7 @@ ansible/        # Host configuration
 | N8N       | Workflow automation        | `https://lucasrocha.dpdns.org/n8n`              |
 | Jellyfin  | Media server               | `https://lucasrocha.dpdns.org/jellyfin`         |
 | Hermes    | AI agent gateway           | WAN: `https://lucasrocha.dpdns.org/hermes/dashboard` (dashboard), `https://lucasrocha.dpdns.org/hermes/webhook/*` (webhooks) |
+| Transmission | BitTorrent client       | LAN: `http://192.168.0.100/transmission` |
 
 ## Getting Started
 
