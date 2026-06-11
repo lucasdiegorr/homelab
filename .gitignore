@@ -4,6 +4,7 @@
 !*-sealed-secret.yaml
 secrets/
 *.sops.yaml
+ansible/secrets.yml
 
 # Terraform
 *.tfstate

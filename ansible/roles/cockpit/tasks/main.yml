@@ -1,0 +1,24 @@
+---
+- name: Install Cockpit
+  apt:
+    name: cockpit
+    state: present
+
+- name: Create systemd drop-in directory
+  file:
+    path: /etc/systemd/system/cockpit.socket.d
+    state: directory
+    mode: "0755"
+
+- name: Bind Cockpit to LAN IP
+  copy:
+    src: listen.conf
+    dest: /etc/systemd/system/cockpit.socket.d/listen.conf
+    mode: "0644"
+
+- name: Reload systemd and enable Cockpit socket
+  systemd:
+    name: cockpit.socket
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

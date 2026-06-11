@@ -1,0 +1,51 @@
+---
+- name: Provision homelab host
+  hosts: all
+  gather_facts: yes
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      tags: always
+
+  roles:
+    - role: common
+      tags: common
+
+    - role: user
+      tags: user
+
+    - role: network
+      tags: network
+
+    - role: cockpit
+      when: cockpit_enabled
+      tags: cockpit
+
+    - role: docker
+      when: docker_enabled
+      tags: docker
+
+    - role: k3s
+      tags: k3s
+
+    - role: devtools
+      tags: devtools
+
+    - role: cleanup
+      tags: cleanup
+
+  post_tasks:
+    - name: Remove unused kernel packages
+      apt:
+        autoremove: yes
+        purge: yes
+      tags: cleanup
+
+    - name: Reboot if kernel updated
+      reboot:
+        reboot_timeout: 120
+      when: linux_generic_packages.changed
+      tags: common

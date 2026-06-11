@@ -1,0 +1,99 @@
+---
+# System
+hostname: zion
+timezone: Etc/UTC
+locale: en_US.UTF-8
+username: pqno
+
+# Network
+lan_interface: enp2s0
+lan_ip: 192.168.0.100
+lan_cidr: 24
+lan_gateway: 192.168.0.1
+lan_dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  - 1.1.1.1
+
+# WiFi (disabled, keep config for reference)
+wifi_interface: wlp3s0
+wifi_enabled: false
+wifi_ssid: LD-HOME
+wifi_password: ""  # set via --extra-vars or vault
+
+# Tailscale
+tailscale_enabled: true
+tailscale_auth_key: ""  # set via --extra-vars or vault
+
+# DuckDNS
+duckdns_enabled: true
+duckdns_domain: lucasdrrocha
+duckdns_token: ""  # set via --extra-vars or vault
+
+# Cloudflare
+cloudflare_account_id: ""  # set via --extra-vars or vault
+cloudflare_api_token: ""  # set via --extra-vars or vault
+
+# SSH
+ssh_authorized_keys: []
+#   - "ssh-ed25519 AAA..."
+
+# Cockpit
+cockpit_enabled: true
+cockpit_port: 9090
+
+# k3s
+k3s_version: v1.32.3+k3s1
+
+# Docker
+docker_enabled: true
+
+# Homebrew packages
+homebrew_packages:
+  - asdf
+  - gh
+  - helm
+  - terraform
+  - gcc
+  - llama.cpp
+  - openblas
+  - openssl@3
+
+# asdf plugins and versions
+asdf_plugins:
+  - name: nodejs
+    version: 26.2.0
+
+# APT manual packages (marked as manual)
+apt_manual_packages:
+  - amdgpu-install
+  - cockpit
+  - efibootmgr
+  - grub-efi-amd64
+  - grub-efi-amd64-signed
+  - k9s
+  - linux-generic
+  - nala
+  - openssh-server
+  - python3-pip
+  - tailscale
+  - tailscale-archive-keyring
+  - wpasupplicant
+
+# APT build essential
+apt_build_packages:
+  - build-essential
+  - linux-headers-generic
+
+# Snap packages
+snap_packages:
+  - name: docker
+    channel: stable
+    classic: true
+
+# Services to disable/mask
+systemd_mask_services:
+  - systemd-networkd-wait-online.service
+
+systemd_disable_services:
+  - snap.network-manager.networkmanager.service

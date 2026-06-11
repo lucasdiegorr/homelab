@@ -1,0 +1,8 @@
+all:
+  hosts:
+    zion:
+      ansible_host: 192.168.0.100
+      ansible_user: pqno
+      ansible_connection: local
+      ansible_become: yes
+      ansible_become_method: sudo

@@ -1,0 +1,144 @@
+---
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}"
+
+- name: Ensure hostname in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "^127\\.0\\.1\\.1"
+    line: "127.0.1.1\t{{ hostname }}"
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Ensure locale exists
+  locale_gen:
+    name: "{{ locale }}"
+    state: present
+
+- name: Set locale
+  command:
+    cmd: update-locale LANG={{ locale }} LC_ALL={{ locale }}
+    creates: /etc/default/locale
+
+- name: Configure hostname in /etc/hostname
+  copy:
+    content: "{{ hostname }}\n"
+    dest: /etc/hostname
+
+- name: Install APT transport and common tools
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - software-properties-common
+    state: present
+
+- name: Add Tailscale APT key
+  apt_key:
+    url: https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg
+    keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
+    state: present
+
+- name: Add Tailscale APT repo
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main"
+    filename: tailscale
+    state: present
+    update_cache: yes
+
+- name: Create ROCm keyring directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Add ROCm GPG key
+  apt_key:
+    url: https://repo.radeon.com/rocm/rocm.gpg.key
+    keyring: /etc/apt/keyrings/rocm.gpg
+    state: present
+
+- name: Add AMDGPU APT repo
+  apt_repository:
+    repo: "deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/amdgpu/30.30.1/ubuntu {{ ansible_distribution_release }} main"
+    filename: amdgpu
+    state: present
+    update_cache: no
+
+- name: Add ROCm APT repo
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/7.2.1 {{ ansible_distribution_release }} main"
+    filename: rocm
+    state: present
+    update_cache: no
+
+- name: Add Graphics APT repo
+  apt_repository:
+    repo: "deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/graphics/7.2.1/ubuntu {{ ansible_distribution_release }} main"
+    filename: rocm
+    state: present
+    update_cache: no
+
+- name: Update apt cache after adding repos
+  apt:
+    update_cache: yes
+
+- name: Install amdgpu-install package
+  apt:
+    name: amdgpu-install
+    state: present
+
+- name: Install manual packages
+  apt:
+    name: "{{ apt_manual_packages }}"
+    state: present
+
+- name: Mark packages as manually installed
+  shell:
+    cmd: apt-mark manual {% for pkg in apt_manual_packages %}{{ pkg }} {% endfor %}
+  when: apt_manual_packages | length > 0
+  changed_when: no
+
+- name: Install build packages
+  apt:
+    name: "{{ apt_build_packages }}"
+    state: present
+
+- name: Install kernel meta-package
+  apt:
+    name: linux-generic
+    state: present
+  register: linux_generic_packages
+
+- name: Configure sysctl
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop:
+    - { key: kernel.kptr_restrict, value: "1" }
+    - { key: kernel.printk, value: "4 4 1 7" }
+    - { key: net.ipv6.conf.all.use_tempaddr, value: "2" }
+    - { key: net.ipv6.conf.default.use_tempaddr, value: "2" }
+    - { key: net.core.default_qdisc, value: "fq_codel" }
+
+- name: Disable unwanted services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+    masked: no
+  failed_when: no
+  loop:
+    - ModemManager
+    - multipathd
+
+# Snap packages are installed in the docker role

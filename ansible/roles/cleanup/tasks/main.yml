@@ -1,0 +1,26 @@
+---
+- name: Mask unnecessary services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    masked: yes
+    state: stopped
+  failed_when: no
+  loop: "{{ systemd_mask_services }}"
+
+- name: Disable conflicting services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  failed_when: no
+  loop: "{{ systemd_disable_services }}"
+
+- name: Remove old kernel packages (rc state)
+  shell:
+    cmd: dpkg --purge $(dpkg -l | awk '/^rc.*linux-image/{print $2}') || true
+  register: old_kernels
+
+- name: Clean apt cache
+  apt:
+    autoclean: yes

@@ -1,0 +1,116 @@
+---
+- name: Ensure user exists
+  user:
+    name: "{{ username }}"
+    shell: /bin/bash
+    groups: sudo,docker
+    append: yes
+    state: present
+    create_home: yes
+
+- name: Add user to additional groups
+  user:
+    name: "{{ username }}"
+    groups: "{{ item }}"
+    append: yes
+  loop:
+    - adm
+    - dip
+    - plugdev
+    - lxd
+    - ollama
+    - microk8s
+
+- name: Create sudoers drop-in
+  copy:
+    content: "{{ username }} ALL=(ALL) NOPASSWD: ALL\n"
+    dest: "/etc/sudoers.d/{{ username }}"
+    mode: "0440"
+    validate: visudo -cf %s
+
+- name: Ensure .ssh directory
+  file:
+    path: "/home/{{ username }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy SSH config
+  copy:
+    src: ssh_config
+    dest: "/home/{{ username }}/.ssh/config"
+    mode: "0600"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy SSH authorized keys
+  authorized_key:
+    user: "{{ username }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ ssh_authorized_keys }}"
+  when: ssh_authorized_keys | length > 0
+
+- name: Deploy Git config
+  copy:
+    src: gitconfig
+    dest: "/home/{{ username }}/.gitconfig"
+    mode: "0644"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy bashrc with customizations
+  template:
+    src: bashrc.j2
+    dest: "/home/{{ username }}/.bashrc"
+    mode: "0644"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy bash aliases
+  copy:
+    src: bash_aliases
+    dest: "/home/{{ username }}/.bash_aliases"
+    mode: "0644"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy .tool-versions
+  copy:
+    src: tool-versions
+    dest: "/home/{{ username }}/.tool-versions"
+    mode: "0644"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Create DuckDNS directory
+  file:
+    path: "/home/{{ username }}/duckdns"
+    state: directory
+    mode: "0700"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy DuckDNS script
+  template:
+    src: duck.sh.j2
+    dest: "/home/{{ username }}/duckdns/duck.sh"
+    mode: "0700"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Deploy DuckDNS cron
+  cron:
+    name: "Update DuckDNS"
+    user: "{{ username }}"
+    minute: "*/5"
+    job: "~/duckdns/duck.sh >/dev/null 2>&1"
+
+- name: Deploy .selected_editor
+  copy:
+    content: "SELECTED_EDITOR=\"/usr/bin/nano\"\n"
+    dest: "/home/{{ username }}/.selected_editor"
+    mode: "0644"
+    owner: "{{ username }}"
+    group: "{{ username }}"

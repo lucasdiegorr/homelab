@@ -1,0 +1,59 @@
+---
+- name: Install Homebrew
+  shell:
+    cmd: |
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    creates: /home/linuxbrew/.linuxbrew/bin/brew
+  become: yes
+  become_user: "{{ username }}"
+
+- name: Install Homebrew packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_packages }}"
+  become: yes
+  become_user: "{{ username }}"
+
+- name: Install asdf plugins
+  shell:
+    cmd: |
+      source /home/linuxbrew/.linuxbrew/bin/brew shellenv bash
+      asdf plugin add {{ item.name }} || true
+      asdf install {{ item.name }} {{ item.version }}
+      asdf global {{ item.name }} {{ item.version }}
+    creates: "/home/{{ username }}/.asdf/installs/{{ item.name }}/{{ item.version }}"
+  loop: "{{ asdf_plugins }}"
+  become: yes
+  become_user: "{{ username }}"
+  args:
+    executable: /bin/bash
+
+- name: Install k9s
+  shell:
+    cmd: |
+      curl -sSL https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz \
+        | tar -xz -C /usr/local/bin k9s
+    creates: /usr/local/bin/k9s
+
+- name: Install ollama
+  shell:
+    cmd: |
+      curl -fsSL https://ollama.com/install.sh | sh
+    creates: /usr/local/bin/ollama
+
+- name: Install opencode
+  shell:
+    cmd: |
+      mkdir -p /home/{{ username }}/.opencode/bin
+      curl -fsSL https://opencode.ai/install.sh | bash
+    creates: /home/{{ username }}/.opencode/bin/opencode
+  become: yes
+  become_user: "{{ username }}"
+
+- name: Install ctx7 CLI
+  shell:
+    cmd: npm install -g ctx7@latest
+    creates: /home/{{ username }}/.nvm/versions/node/*/bin/ctx7
+  become: yes
+  become_user: "{{ username }}"
