@@ -17,16 +17,12 @@ spec:
         - name: init-dirs
           image: busybox:latest
           command:
-            - mkdir
-            - -p
-            - /downloads/complete
-            - /downloads/incomplete
-            - /watch
+            - sh
+            - -c
+            - mkdir -p /downloads/complete /downloads/incomplete
           volumeMounts:
             - name: media
               mountPath: /downloads
-            - name: watch
-              mountPath: /watch
       containers:
         - name: transmission
           image: lscr.io/linuxserver/transmission:latest
@@ -46,8 +42,6 @@ spec:
               mountPath: /config
             - name: media
               mountPath: /downloads
-            - name: watch
-              mountPath: /watch
           env:
             - name: TZ
               value: "Etc/UTC"
@@ -85,8 +79,5 @@ spec:
           persistentVolumeClaim:
             claimName: transmission-config
         - name: media
-          persistentVolumeClaim:
-            claimName: transmission-media
-        - name: watch
           persistentVolumeClaim:
             claimName: transmission-media
