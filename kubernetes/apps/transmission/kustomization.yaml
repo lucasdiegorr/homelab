@@ -6,5 +6,4 @@ resources:
   - pvc-media.yaml
   - deployment.yaml
   - service.yaml
-  - middleware-transmission.yaml
   - ingressroute-lan.yaml
