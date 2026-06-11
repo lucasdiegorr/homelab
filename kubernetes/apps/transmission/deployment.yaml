@@ -13,6 +13,20 @@ spec:
       labels:
         app: transmission
     spec:
+      initContainers:
+        - name: init-dirs
+          image: busybox:latest
+          command:
+            - mkdir
+            - -p
+            - /downloads/complete
+            - /downloads/incomplete
+            - /watch
+          volumeMounts:
+            - name: media
+              mountPath: /downloads
+            - name: watch
+              mountPath: /watch
       containers:
         - name: transmission
           image: lscr.io/linuxserver/transmission:latest
@@ -31,7 +45,9 @@ spec:
             - name: config
               mountPath: /config
             - name: media
-              mountPath: /media
+              mountPath: /downloads
+            - name: watch
+              mountPath: /watch
           env:
             - name: TZ
               value: "Etc/UTC"
@@ -45,13 +61,7 @@ spec:
                 secretKeyRef:
                   name: transmission-auth
                   key: pass
-            - name: TRANSMISSION_DOWNLOAD_DIR
-              value: "/media/torrents/complete"
-            - name: TRANSMISSION_INCOMPLETE_DIR
-              value: "/media/torrents/incomplete"
-            - name: TRANSMISSION_WATCH_DIR
-              value: "/media/torrents/watch"
-            - name: PEER_PORT
+            - name: PEERPORT
               value: "51413"
           resources:
             requests:
@@ -61,14 +71,12 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
           livenessProbe:
-            httpGet:
-              path: /transmission/web/
+            tcpSocket:
               port: 9091
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
-            httpGet:
-              path: /transmission/web/
+            tcpSocket:
               port: 9091
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -77,5 +85,8 @@ spec:
           persistentVolumeClaim:
             claimName: transmission-config
         - name: media
+          persistentVolumeClaim:
+            claimName: transmission-media
+        - name: watch
           persistentVolumeClaim:
             claimName: transmission-media
