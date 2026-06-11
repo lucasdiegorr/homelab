@@ -1,0 +1,24 @@
+network:
+  version: 2
+  ethernets:
+    {{ lan_interface }}:
+      addresses:
+        - {{ lan_ip }}/{{ lan_cidr }}
+      routes:
+        - to: default
+          via: {{ lan_gateway }}
+      nameservers:
+        addresses:
+{% for dns in lan_dns %}
+          - {{ dns }}
+{% endfor %}
+{% if wifi_enabled %}
+  wifis:
+    {{ wifi_interface }}:
+      dhcp4: true
+      access-points:
+        "{{ wifi_ssid }}":
+          auth:
+            key-management: "psk"
+            password: "{{ wifi_password }}"
+{% endif %}

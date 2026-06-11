@@ -1,0 +1,58 @@
+---
+- name: Deploy netplan config
+  template:
+    src: 90-network.yaml.j2
+    dest: /etc/netplan/90-network.yaml
+    mode: "0644"
+
+- name: Remove cloud-init netplan
+  file:
+    path: /etc/netplan/50-cloud-init.yaml
+    state: absent
+
+- name: Ensure default renderer is NetworkManager
+  copy:
+    src: 00-default-nm-renderer.yaml
+    dest: /etc/netplan/00-default-nm-renderer.yaml
+    mode: "0644"
+
+- name: Apply netplan
+  command:
+    cmd: netplan apply
+
+- name: Configure systemd-resolved
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: "^#?DNS="
+    line: "DNS={{ lan_dns | join(' ') }}"
+
+- name: Restart systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: restarted
+    enabled: yes
+
+- name: Install Tailscale
+  apt:
+    name: tailscale
+    state: present
+
+- name: Enable IP forwarding for Tailscale
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Start Tailscale
+  systemd:
+    name: tailscaled
+    state: started
+    enabled: yes
+
+- name: Authenticate Tailscale
+  command:
+    cmd: tailscale up --auth-key={{ tailscale_auth_key }}
+  when: tailscale_auth_key | length > 0
+  no_log: yes

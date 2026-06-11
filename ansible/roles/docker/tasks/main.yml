@@ -1,0 +1,14 @@
+---
+- name: Install Docker via snap
+  snap:
+    name: "{{ item.name }}"
+    channel: "{{ item.channel | default('stable') }}"
+    classic: "{{ item.classic | default(false) }}"
+    state: present
+  loop: "{{ snap_packages }}"
+
+- name: Ensure Docker snap is started
+  systemd:
+    name: snap.docker.dockerd
+    state: started
+    enabled: yes

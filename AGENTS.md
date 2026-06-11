@@ -93,7 +93,17 @@ Note: `~/.bashrc` returns early in non-interactive shells, so Terraform uses `te
 ### Ansible
 
 ```bash
-ansible-playbook -i inventory.ini playbook.yml
+# Full provisioning (secrets via --extra-vars)
+ansible-playbook -i ansible/inventory.yml ansible/playbook.yml \
+  -e duckdns_token=token \
+  -e cloudflare_account_id=id
+
+# Selective roles
+ansible-playbook -i ansible/inventory.yml ansible/playbook.yml --tags cockpit
+
+# Secrets file (gitignored)
+ansible-playbook -i ansible/inventory.yml ansible/playbook.yml \
+  -e @ansible/secrets.yml
 ```
 
 ## Architecture: Path-Based Access
